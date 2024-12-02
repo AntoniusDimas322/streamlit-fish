@@ -8,6 +8,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pickle  # Untuk file .pkl
+import joblib  # Untuk file .sv
 
 # Load dataset
 data = pd.read_csv("Fish.csv")
@@ -129,3 +131,25 @@ elif menu == "Model Prediksi":
         user_data_poly = poly.transform(user_data)
         user_prediction = model.predict(user_data_poly)[0]
         st.write(f"Prediksi berat ikan berdasarkan input: **{user_prediction:.2f}** gram")
+        
+        # Save model to .pkl file when user clicks button
+    if st.button("Simpan Model .pkl"):
+        with open("model.pkl", "wb") as file:
+            pickle.dump(model, file)
+        st.write("Model berhasil disimpan ke file model.pkl")
+
+    # Save model to .sv file when user clicks button
+    if st.button("Simpan Model .sv"):
+        joblib.dump(model, "model.sv")
+        st.write("Model berhasil disimpan ke file model.sv")
+
+    # Load model from .pkl file
+    if st.button("Muat Model .pkl"):
+        with open("model.pkl", "rb") as file:
+            loaded_model = pickle.load(file)
+        st.write("Model berhasil dimuat dari file model.pkl")
+
+    # Load model from .sv file
+    if st.button("Muat Model .sv"):
+        loaded_model = joblib.load("model.sv")
+        st.write("Model berhasil dimuat dari file model.sv")
