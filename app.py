@@ -54,17 +54,17 @@ elif menu == "Visualisasi":
         st.pyplot()
 
     # Heatmap untuk korelasi
-st.subheader("Heatmap Korelasi Antar Fitur")
-if st.checkbox("Tampilkan Heatmap Korelasi"):
-    # Pisahkan kolom numerik dan kategorikal
-    numeric_data = data.select_dtypes(include=[np.number])
-    
-    # Hitung korelasi hanya untuk data numerik
-    correlation_matrix = numeric_data.corr()
-    
-    plt.figure(figsize=(10, 6))
-    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
-    st.pyplot()
+    st.subheader("Heatmap Korelasi Antar Fitur")
+    if st.checkbox("Tampilkan Heatmap Korelasi"):
+        # Pisahkan kolom numerik
+        numeric_data = data.select_dtypes(include=[np.number])
+        
+        # Hitung korelasi hanya untuk data numerik
+        correlation_matrix = numeric_data.corr()
+        
+        plt.figure(figsize=(10, 6))
+        sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
+        st.pyplot()
 
 # Model prediction
 elif menu == "Model Prediksi":
@@ -86,8 +86,8 @@ elif menu == "Model Prediksi":
     model = LinearRegression()
     model.fit(X_train_poly, y_train)
 
-    # Make predictions
-    y_pred = model.predict(X_test_poly)
+    # **Prediksi pada data uji**
+    y_pred = model.predict(X_test_poly)  # Tambahkan prediksi di sini
 
     # Evaluate the model
     mse = mean_squared_error(y_test, y_pred)
@@ -116,3 +116,16 @@ elif menu == "Model Prediksi":
     ax2.set_xlabel("Actual Weight")
     ax2.set_ylabel("Residuals")
     st.pyplot(fig2)
+
+    # User input for prediction
+    st.subheader("Prediksi Berdasarkan Input Manual")
+    user_inputs = {}
+    for column in X.columns:
+        user_inputs[column] = st.number_input(f"Masukkan {column}", value=0.0)
+
+    if st.button("Prediksi"):
+        # Prepare the input data for prediction
+        user_data = np.array([list(user_inputs.values())]).reshape(1, -1)
+        user_data_poly = poly.transform(user_data)
+        user_prediction = model.predict(user_data_poly)[0]
+        st.write(f"Prediksi berat ikan berdasarkan input: **{user_prediction:.2f}** gram")
